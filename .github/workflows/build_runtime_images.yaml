@@ -39,7 +39,9 @@ jobs:
               echo "X_TAG=${{ matrix.x_server }}" >> "$GITHUB_ENV"
           fi
           IMAGE_NAME=fast:${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-$X_TAG-$VGL_TAG
+          IMAGE_FILENAME=fast-${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-$X_TAG-$VGL_TAG.tar
           echo "IMAGE_NAME=$IMAGE_NAME" >> "$GITHUB_ENV"
+          echo "IMAGE_FILENAME=$IMAGE_FILENAME" >> "$GITHUB_ENV"
       - name: Build
         run: |
           docker build . -f runtime.Dockerfile \
@@ -59,13 +61,15 @@ jobs:
 
       - name: Save docker image to file
         run: |
-          docker save -o fast-${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-${X_TAG}-$VGL_TAG.tar $IMAGE_NAME
+          docker save -o $IMAGE_FILENAME $IMAGE_NAME
 
       - name: Upload docker image file as artifact
         uses: actions/upload-artifact@v4
         with:
-          path: fast-*.tar
-          if-no-files-foud: error
+          name: ${{ env.IMAGE_NAME }}
+          path: ${{ env.IMAGE_FILENAME }}
+          if-no-files-found: error
+          retention-days: 3
 
       - name: Login to GitHub Container Registry
         if: ${{ inputs.deploy }}
