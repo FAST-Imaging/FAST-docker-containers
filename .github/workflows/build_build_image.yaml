@@ -28,13 +28,13 @@ jobs:
 
       - name: Save docker image to file
         run: |
-          docker save -o fast:${FAST_VERSION}-build.tar fast:${FAST_VERSION}-build
+          docker save -o fast-${FAST_VERSION}-build.tar fast:${FAST_VERSION}-build
 
       - name: Upload docker image file as artifact
         uses: actions/upload-artifact@v4
         with:
           path: fast-*.tar
-          if-no-files-foud: error
+          if-no-files-found: error
 
       - name: Test image
         run: |
