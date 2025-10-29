@@ -51,9 +51,9 @@ jobs:
       - name: Test
         run: |
           if [ "${{ matrix.opencl }}" = "intel" ]; then
-            docker run -it --rm --device=/dev/dri $IMAGE_NAME
+            docker run --rm --device=/dev/dri $IMAGE_NAME
           else
-            docker run -it --rm $IMAGE_NAME
+            docker run --rm $IMAGE_NAME
           fi
 
       - name: Save docker image to file
