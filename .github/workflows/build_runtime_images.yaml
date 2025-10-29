@@ -51,12 +51,20 @@ jobs:
             --build-arg OPENCL_PLATFORM=${{ matrix.opencl }} \
             --build-arg VIRTUALGL=${{ matrix.vgl }}
 
+      - name: Cache test data
+        id: cache-test-dataset
+        uses: actions/cache@v4
+        with:
+          path: ~/FAST/data/
+          key: test-dataset
+          enableCrossOsArchive: true
+
       - name: Test
         run: |
           if [ "${{ matrix.opencl }}" = "intel" ]; then
-            docker run --rm --device=/dev/dri $IMAGE_NAME
+            docker run --rm -v ~/FAST/data/:/root/FAST/data/:ro --device=/dev/dri $IMAGE_NAME
           else
-            docker run --rm $IMAGE_NAME
+            docker run --rm -v ~/FAST/data/:/root/FAST/data/:ro $IMAGE_NAME
           fi
 
       - name: Save docker image to file
