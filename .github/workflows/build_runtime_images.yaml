@@ -29,14 +29,14 @@ jobs:
           FAST_VERSION=$(python3 get_latest_fast_version.py)
           echo "FAST_VERSION=$FAST_VERSION" >> "$GITHUB_ENV"
           if [ "${{ matrix.vgl }}" = "true" ]; then
-            echo "VGL_TAG=-vgl" >> "$GITHUB_ENV"
+            VGL_TAG=-vgl
           else
-            echo "VGL_TAG=" >> "$GITHUB_ENV"
+            VGL_TAG=
           fi
           if [ "${{ matrix.x_server }}" = "none" ]; then
-              echo "X_TAG=no_x" >> "$GITHUB_ENV"
+              X_TAG=no_x
           else
-              echo "X_TAG=${{ matrix.x_server }}" >> "$GITHUB_ENV"
+              X_TAG=${{ matrix.x_server }}
           fi
           IMAGE_NAME=fast:${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-$X_TAG-$VGL_TAG
           IMAGE_FILENAME=fast-${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-$X_TAG-$VGL_TAG.tar
