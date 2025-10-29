@@ -27,30 +27,30 @@ jobs:
         run: |
           FAST_VERSION=$(python3 get_latest_fast_version.py)
           echo "FAST_VERSION=$FAST_VERSION" >> "$GITHUB_ENV"
-          if [ "${{ vgl }}" = "true" ]; then
+          if [ "${{ matrix.vgl }}" = "true" ]; then
             echo "VGL_TAG=-vgl" >> "$GITHUB_ENV"
           else
             echo "VGL_TAG=" >> "$GITHUB_ENV"
           fi
-          if [ "${{ X_SERVER }}" = "none" ]; then
+          if [ "${{ matrix.x_server }}" = "none" ]; then
               echo "X_TAG=no_x" >> "$GITHUB_ENV"
           else
-              echo "X_TAG=${{ x_server }}" >> "$GITHUB_ENV"
+              echo "X_TAG=${{ matrix.x_server }}" >> "$GITHUB_ENV"
           fi
-          IMAGE_NAME=fast:${FAST_VERSION}-${{ type }}-${{ opencl }}-$X_TAG-$VGL_TAG
+          IMAGE_NAME=fast:${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-$X_TAG-$VGL_TAG
           echo "IMAGE_NAME=$IMAGE_NAME" >> "$GITHUB_ENV"
       - name: Build
         run: |
           docker build . -f runtime.Dockerfile \
             -t $IMAGE_NAME \
-            --build-arg TYPE=${{ type }} \
-            --build-arg X_SERVER=${{ x_server }} \
-            --build-arg OPENCL_PLATFORM=${{ opencl }} \
-            --build-arg VIRTUALGL=${{ vgl }}
+            --build-arg TYPE=${{ matrix.type }} \
+            --build-arg X_SERVER=${{ matrix.x_server }} \
+            --build-arg OPENCL_PLATFORM=${{ matrix.opencl }} \
+            --build-arg VIRTUALGL=${{ matrix.vgl }}
 
       - name: Test
         run: |
-          if [ "${{ opencl }}" = "intel" ]; then
+          if [ "${{ matrix.opencl }}" = "intel" ]; then
             docker run -it --rm --device=/dev/dri $IMAGE_NAME
           else
             docker run -it --rm $IMAGE_NAME
@@ -58,7 +58,7 @@ jobs:
 
       - name: Save docker image to file
         run: |
-          docker save -o fast-${FAST_VERSION}-${{ type }}-${{ opencl }}-${X_TAG}-$VG_TAG.tar $IMAGE_NAME
+          docker save -o fast-${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-${X_TAG}-$VGL_TAG.tar $IMAGE_NAME
 
       - name: Upload docker image file as artifact
         uses: actions/upload-artifact@v4
