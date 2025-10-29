@@ -38,8 +38,8 @@ jobs:
           else
               X_TAG=${{ matrix.x_server }}
           fi
-          IMAGE_NAME=fast:${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-$X_TAG-$VGL_TAG
-          IMAGE_FILENAME=fast-${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-$X_TAG-$VGL_TAG.tar
+          IMAGE_NAME=fast:${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-${X_TAG}${VGL_TAG}
+          IMAGE_FILENAME=fast-${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-${X_TAG}${VGL_TAG}.tar
           echo "IMAGE_NAME=$IMAGE_NAME" >> "$GITHUB_ENV"
           echo "IMAGE_FILENAME=$IMAGE_FILENAME" >> "$GITHUB_ENV"
       - name: Build
@@ -60,11 +60,13 @@ jobs:
           enableCrossOsArchive: true
 
       - name: Test
+        # Intel OpenCL does not work in github action
+        if: ${{ matrix.opencl }} != "intel"
         run: |
           if [ "${{ matrix.opencl }}" = "intel" ]; then
-            docker run --rm -v ~/FAST/data/:/root/FAST/data/:ro --device=/dev/dri $IMAGE_NAME
+            docker run --rm -v ~/FAST/data/:/root/FAST/data/ --device=/dev/dri $IMAGE_NAME
           else
-            docker run --rm -v ~/FAST/data/:/root/FAST/data/:ro $IMAGE_NAME
+            docker run --rm -v ~/FAST/data/:/root/FAST/data/ $IMAGE_NAME
           fi
 
       - name: Save docker image to file
