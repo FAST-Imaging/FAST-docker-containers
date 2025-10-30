@@ -69,6 +69,8 @@ jobs:
             --build-arg FAST_VERSION=$FAST_VERSION
 
       - name: Cache test data
+        # Intel OpenCL does not work in github action
+        if: ${{ matrix.opencl != 'intel' }}
         id: cache-test-dataset
         uses: actions/cache@v4
         with:
