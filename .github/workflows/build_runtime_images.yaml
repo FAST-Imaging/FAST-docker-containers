@@ -11,8 +11,23 @@ on:
         default: false
 
 jobs:
-  build:
+  get-latest-version:
     runs-on: ubuntu-latest
+    outputs:
+      fast-version: ${{ steps.get.outputs.result }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Get latest FAST version
+        id: get
+        run: |
+          FAST_VERSION=$(python3 get_latest_fast_version.py)
+          echo "result=$FAST_VERSION" >> $GITHUB_OUTPUT
+
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    needs: get-latest-version
     strategy:
       fail-fast: false
       matrix:
@@ -26,7 +41,7 @@ jobs:
 
       - name: Set variables
         run: |
-          FAST_VERSION=$(python3 get_latest_fast_version.py)
+          FAST_VERSION=${{ needs.get-latest-version.outputs.fast-version }}
           echo "FAST_VERSION=$FAST_VERSION" >> "$GITHUB_ENV"
           if [ "${{ matrix.vgl }}" = "true" ]; then
             VGL_TAG=-vgl
@@ -42,6 +57,7 @@ jobs:
           IMAGE_FILENAME=fast-${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-${X_TAG}${VGL_TAG}.tar
           echo "IMAGE_NAME=$IMAGE_NAME" >> "$GITHUB_ENV"
           echo "IMAGE_FILENAME=$IMAGE_FILENAME" >> "$GITHUB_ENV"
+
       - name: Build
         run: |
           docker build . -f runtime.Dockerfile \
@@ -59,9 +75,9 @@ jobs:
           key: test-dataset
           enableCrossOsArchive: true
 
-      - name: Test
+      - name: Test docker image
         # Intel OpenCL does not work in github action
-        if: ${{ matrix.opencl }} != "intel"
+        if: ${{ matrix.opencl != "intel" }}
         run: |
           if [ "${{ matrix.opencl }}" = "intel" ]; then
             docker run --rm -v ~/FAST/data/:/root/FAST/data/ --device=/dev/dri $IMAGE_NAME
