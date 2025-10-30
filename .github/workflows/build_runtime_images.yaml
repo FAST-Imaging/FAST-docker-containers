@@ -65,7 +65,8 @@ jobs:
             --build-arg TYPE=${{ matrix.type }} \
             --build-arg X_SERVER=${{ matrix.x_server }} \
             --build-arg OPENCL_PLATFORM=${{ matrix.opencl }} \
-            --build-arg VIRTUALGL=${{ matrix.vgl }}
+            --build-arg VIRTUALGL=${{ matrix.vgl }} \
+            --build-arg FAST_VERSION=$FAST_VERSION
 
       - name: Cache test data
         id: cache-test-dataset

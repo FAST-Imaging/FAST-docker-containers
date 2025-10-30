@@ -83,7 +83,8 @@ RUN if [ "${TYPE}" = "python" ]; then \
        python3 -m venv /environment && \
        source /environment/bin/activate && \
        pip install requests && \
-       pip install pyfast==$(python fast_version.py $FAST_VERSION); \
+       pip install pyfast==$(python fast_version.py $FAST_VERSION) && \
+       pip cache purge; \
    else \
        apt install -y python3 python3-pip python3-venv wget libopenslide0 &&\
        python3 -m venv /environment && \
