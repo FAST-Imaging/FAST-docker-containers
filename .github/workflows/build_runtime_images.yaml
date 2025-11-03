@@ -39,6 +39,9 @@ jobs:
         x_server: [xvfb, none]
         opencl: [pocl, intel]
         vgl: [true, false]
+        exclude:
+          - vgl: true
+            x_server: none
     steps:
       - name: Checkout
         uses: actions/checkout@v5
