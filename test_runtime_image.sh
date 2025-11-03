@@ -8,5 +8,5 @@ if [ "$TYPE" = "python" ]; then
   cd FAST/source/FAST/Python/Tests
   pytest -v -s -k "not cast"
 else
-  ./opt/fast/bin/systemCheck
+  ./opt/fast/bin/systemCheck --no-gui
 fi
