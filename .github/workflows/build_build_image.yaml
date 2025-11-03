@@ -48,7 +48,7 @@ jobs:
 
       - name: Test image
         run: |
-          docker run --rm fast:${FAST_VERSION}-build
+          docker run --rm $IMAGE_NAME
 
       - name: Login to GitHub Container Registry
         if: ${{ inputs.deploy }}
@@ -61,4 +61,4 @@ jobs:
       - name: Push container
         if: ${{ inputs.deploy }}
         run: |
-          docker push fast:${FAST_VERSION}-build
+          docker push $IMAGE_NAME
