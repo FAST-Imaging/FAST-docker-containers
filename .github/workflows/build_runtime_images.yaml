@@ -57,7 +57,7 @@ jobs:
           else
               X_TAG=${{ matrix.x_server }}
           fi
-          IMAGE_NAME=fast:${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-${X_TAG}${VGL_TAG}
+          IMAGE_NAME=ghcr.io/fast-imaging/fast:${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-${X_TAG}${VGL_TAG}
           IMAGE_FILENAME=fast-${FAST_VERSION}-${{ matrix.type }}-${{ matrix.opencl }}-${X_TAG}${VGL_TAG}.tar
           echo "IMAGE_NAME=$IMAGE_NAME" >> "$GITHUB_ENV"
           echo "IMAGE_FILENAME=$IMAGE_FILENAME" >> "$GITHUB_ENV"
